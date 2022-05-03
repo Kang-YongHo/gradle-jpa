@@ -31,6 +31,7 @@ public class AccountRepositoryExtensionImpl extends QuerydslRepositorySupport im
     @Override
     public Page<Account> accounts(AccountSearchRequest accountSearchRequest, Pageable pageable) {
         QAccount account = QAccount.account;
+
         BooleanBuilder where = new BooleanBuilder();
         where.and(account.isDelete.eq(YN.N));
 

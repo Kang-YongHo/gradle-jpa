@@ -5,7 +5,6 @@ import com.example.demo.modules.account.application.request.AccountCreateRequest
 import com.example.demo.modules.account.application.request.AccountSearchRequest;
 import com.example.demo.modules.account.application.request.AccountUpdateRequest;
 import com.example.demo.modules.account.domain.Account;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -15,8 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,12 +44,11 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).body(one);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @RequestBody AccountUpdateRequest accountUpdateRequest){
 
         accountUpdateRequest.setId(id);
-        Account map = modelMapper.map(accountUpdateRequest, Account.class);
         Long update = accountService.update(accountUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK).body(update);
     }
