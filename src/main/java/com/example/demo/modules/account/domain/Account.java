@@ -1,20 +1,22 @@
 package com.example.demo.modules.account.domain;
 
-import lombok.*;
+import com.example.demo.modules.account.application.request.AccountUpdateRequest;
+import com.example.demo.modules.common.type.YN;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@DynamicUpdate
 public class Account {
 
     @Id @GeneratedValue
-    @Column(name = "account_id")
     private Long id;
 
     private String name;
@@ -22,11 +24,13 @@ public class Account {
     private String age;
     private String location;
 
-    public Account(Long id, String name, String email, String age, String location) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.age = age;
-        this.location = location;
+    @Enumerated(EnumType.STRING)
+    private YN isDelete = YN.N;
+
+    public void setUpdateData(AccountUpdateRequest account){
+        this.name = account.getName();
+        this.email = account.getEmail();
+        this.age = account.getAge();
+        this.location = account.getLocation();
     }
 }

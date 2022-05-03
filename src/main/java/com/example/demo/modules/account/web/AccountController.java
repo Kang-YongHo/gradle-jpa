@@ -3,6 +3,7 @@ package com.example.demo.modules.account.web;
 import com.example.demo.modules.account.application.AccountService;
 import com.example.demo.modules.account.application.request.AccountCreateRequest;
 import com.example.demo.modules.account.application.request.AccountSearchRequest;
+import com.example.demo.modules.account.application.request.AccountUpdateRequest;
 import com.example.demo.modules.account.domain.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +34,32 @@ public class AccountController {
 
     @GetMapping
     public ResponseEntity<?> list(
-            @PageableDefault(size = 9, sort = "id", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
                     Pageable pageable,
             AccountSearchRequest accountSearchRequest) {
         Page<Account> list = accountService.list(accountSearchRequest, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findOne(@PathVariable Long id){
+        Account one = accountService.findOne(id);
+        return ResponseEntity.status(HttpStatus.OK).body(one);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestBody AccountUpdateRequest accountUpdateRequest){
+
+        accountUpdateRequest.setId(id);
+        Account map = modelMapper.map(accountUpdateRequest, Account.class);
+        Long update = accountService.update(accountUpdateRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(update);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        boolean delete = accountService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(delete);
     }
 }

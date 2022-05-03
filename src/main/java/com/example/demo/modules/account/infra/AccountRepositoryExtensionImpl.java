@@ -3,6 +3,7 @@ package com.example.demo.modules.account.infra;
 import com.example.demo.modules.account.application.request.AccountSearchRequest;
 import com.example.demo.modules.account.domain.Account;
 import com.example.demo.modules.account.domain.QAccount;
+import com.example.demo.modules.common.type.YN;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
@@ -31,6 +32,7 @@ public class AccountRepositoryExtensionImpl extends QuerydslRepositorySupport im
     public Page<Account> accounts(AccountSearchRequest accountSearchRequest, Pageable pageable) {
         QAccount account = QAccount.account;
         BooleanBuilder where = new BooleanBuilder();
+        where.and(account.isDelete.eq(YN.N));
 
         if(StringUtils.hasText(accountSearchRequest.getName())){
             where.or(account.name.containsIgnoreCase(accountSearchRequest.getName()));
@@ -56,5 +58,15 @@ public class AccountRepositoryExtensionImpl extends QuerydslRepositorySupport im
 
         QueryResults<Account> queryResults = query.fetchResults();
         return new PageImpl<>(queryResults.getResults(), pageable, queryResults.getTotal());
+    }
+
+    @Override
+    public boolean deleteAccount(Long id) {
+        QAccount account = QAccount.account;
+        return queryFactory.update(account)
+                .set(account.isDelete, YN.Y)
+                .where(account.id.eq(id)
+                        .and(account.isDelete.eq(YN.N)))
+                .execute() == 1L;
     }
 }
